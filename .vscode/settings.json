@@ -11,5 +11,8 @@
     "lib": true,
     "**/*.sublime-*": true,
     "node_modules": true
-  }
+  },
+  "deno.enable": true,
+  "deno.lint": true,
+  "deno.unstable": false
 }
