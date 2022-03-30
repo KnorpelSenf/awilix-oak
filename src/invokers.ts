@@ -7,10 +7,10 @@ import {
   FunctionReturning,
   Resolver,
   ResolverOptions,
-} from "https://raw.githubusercontent.com/KnorpelSenf/awilix/9ce861b2f6738405426d5812927e20a459392024/src/awilix.ts";
-import { isClass } from "https://raw.githubusercontent.com/KnorpelSenf/awilix/9ce861b2f6738405426d5812927e20a459392024/src/utils.ts";
-import { MethodName } from "https://raw.githubusercontent.com/KnorpelSenf/awilix-router-core/5992af9a874bd3854ef12d936e8f8872ac51480c/src/index.ts";
-import { assert } from "https://deno.land/std@0.132.0/testing/asserts.ts";
+} from 'https://raw.githubusercontent.com/KnorpelSenf/awilix/9ce861b2f6738405426d5812927e20a459392024/src/awilix.ts';
+import { isClass } from 'https://raw.githubusercontent.com/KnorpelSenf/awilix/9ce861b2f6738405426d5812927e20a459392024/src/utils.ts';
+import { MethodName } from 'https://raw.githubusercontent.com/KnorpelSenf/awilix-router-core/5992af9a874bd3854ef12d936e8f8872ac51480c/src/index.ts';
+import { assert } from 'https://deno.land/std@0.132.0/testing/asserts.ts';
 
 /**
  * Creates either a function invoker or a class invoker, based on whether
@@ -128,7 +128,7 @@ export function inject(factory: ClassOrFunctionReturning<any> | Resolver<any>) {
 function getResolver<T>(
   arg: ClassOrFunctionReturning<T> | Resolver<T>,
 ): Resolver<T> {
-  if (typeof arg === "function") {
+  if (typeof arg === 'function') {
     /*tslint:disable-next-line*/
     return asFunction(arg as any);
   }
