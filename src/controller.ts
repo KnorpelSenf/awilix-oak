@@ -1,7 +1,7 @@
 import {
   type Middleware,
   Router,
-} from "https://deno.land/x/oak@v10.5.1/mod.ts";
+} from 'https://deno.land/x/oak@v10.5.1/mod.ts';
 import {
   findControllers,
   getStateAndTarget,
@@ -9,8 +9,8 @@ import {
   IAwilixControllerBuilder,
   IStateAndTarget,
   rollUpState,
-} from "https://raw.githubusercontent.com/KnorpelSenf/awilix-router-core/5992af9a874bd3854ef12d936e8f8872ac51480c/src/index.ts";
-import { makeInvoker } from "./invokers.ts";
+} from 'https://raw.githubusercontent.com/KnorpelSenf/awilix-router-core/5992af9a874bd3854ef12d936e8f8872ac51480c/src/index.ts';
+import { makeInvoker } from './invokers.ts';
 
 /**
  * Constructor type.
@@ -29,7 +29,7 @@ export function controller(
   ControllerClass:
     | ConstructorOrControllerBuilder
     | Array<ConstructorOrControllerBuilder>,
-): Middleware {
+): [Middleware, Middleware] {
   const router = new Router();
   if (Array.isArray(ControllerClass)) {
     ControllerClass.forEach((c) =>
@@ -39,57 +39,59 @@ export function controller(
     _registerController(router, getStateAndTarget(ControllerClass));
   }
 
-  return compose([router.routes(), router.allowedMethods()]);
+  return [router.routes(), router.allowedMethods()];
 }
-function compose(middleware: Middleware[]): Middleware {
-  if (!Array.isArray(middleware)) {
-    throw new TypeError("Middleware stack must be an array!");
-  }
-  for (const fn of middleware) {
-    if (typeof fn !== "function") {
-      throw new TypeError("Middleware must be composed of functions!");
-    }
-  }
+// function compose(middleware: Middleware[]): Middleware {
+//   if (!Array.isArray(middleware)) {
+//     throw new TypeError("Middleware stack must be an array!");
+//   }
+//   for (const fn of middleware) {
+//     if (typeof fn !== "function") {
+//       throw new TypeError("Middleware must be composed of functions!");
+//     }
+//   }
 
-  /**
-   * @param {Object} context
-   * @return {Promise}
-   * @api public
-   */
+//   /**
+//    * @param {Object} context
+//    * @return {Promise}
+//    * @api public
+//    */
 
-  return function (context, next) {
-    // last called middleware #
-    let index = -1;
-    return dispatch(0);
-    function dispatch(i: number): Promise<unknown> {
-      if (i <= index) {
-        return Promise.reject(new Error("next() called multiple times"));
-      }
-      index = i;
-      let fn = middleware[i];
-      if (i === middleware.length) fn = next;
-      if (!fn) return Promise.resolve();
-      try {
-        return Promise.resolve(fn(context, dispatch.bind(null, i + 1)));
-      } catch (err) {
-        return Promise.reject(err);
-      }
-    }
-  };
-}
+//   return function (context, next) {
+//     // last called middleware #
+//     let index = -1;
+//     return dispatch(0);
+//     function dispatch(i: number): Promise<unknown> {
+//       if (i <= index) {
+//         return Promise.reject(new Error("next() called multiple times"));
+//       }
+//       index = i;
+//       let fn = middleware[i];
+//       if (i === middleware.length) fn = next;
+//       if (!fn) return Promise.resolve();
+//       try {
+//         return Promise.resolve(fn(context, dispatch.bind(null, i + 1)));
+//       } catch (err) {
+//         return Promise.reject(err);
+//       }
+//     }
+//   };
+// }
 /**
  * Loads controllers for the given pattern.
  *
  * @param pattern
  * @param opts
  */
-export async function loadControllers(pattern: string): Promise<Middleware> {
+export async function loadControllers(
+  pattern: string,
+): Promise<[Middleware, Middleware]> {
   const router = new Router();
   (await findControllers(pattern)).forEach(
     _registerController.bind(null, router),
   );
 
-  return compose([router.routes(), router.allowedMethods()]) as any;
+  return [router.routes(), router.allowedMethods()];
 }
 
 /**
@@ -114,7 +116,7 @@ function _registerController(
     methodCfg.verbs.forEach((httpVerb) => {
       let method = httpVerb.toLowerCase();
       if (httpVerb === HttpVerbs.ALL) {
-        method = "all";
+        method = 'all';
       }
 
       router[method](
